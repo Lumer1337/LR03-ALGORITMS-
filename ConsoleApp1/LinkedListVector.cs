@@ -50,35 +50,87 @@ namespace ConsoleApp1
         }
         public void DeleteCopies()
         {
-            Node it = head;
-            int count = 0;
-            for (int i = 0; i < Size; i++) //O(n^3)
+            head = МergeSort(head);
+            Node iterator = head;
+            Node next_next;
+            if (head == null)
             {
-                if (it != null && count != i)
+                return;
+            }
+            while (iterator.next != null)
+            {
+                if (iterator.value == iterator.next.value)
                 {
-                    it = it.next;
-                    count++;
+                    next_next = iterator.next.next;
+                    iterator.next = null;
+                    iterator.next = next_next;
                 }
-                int size = Size;
-                Node iterator2 = it;
-                int count2 = count;
-                for (int j = i + 1; j < size; j++)       //O(n^2)
+                else
                 {
-                    if (iterator2 != null && count2 != j)    //O(n)
-                    {
-                        if (iterator2.next != null)      //O(n)
-                        {
-                            iterator2 = iterator2.next;
-                            if (it.value == iterator2.value)      //O(n)
-                            {
-                                UdalenieCKonca(count2 + 1);  //O(n)
-                                count2--;
-                            }
-                            count2++;
-                        }
-                    }
+                    iterator = iterator.next;
                 }
             }
+        }
+        static Node МergeSort(Node head)
+        {
+            if (head.next == null)
+                return head;
+
+            Node mid = FindMid(head);
+            Node head2 = mid.next;
+            mid.next = null;
+            Node newHead1 = МergeSort(head);
+            Node newHead2 = МergeSort(head2);
+            Node finalHead = Merge(newHead1, newHead2);
+
+            return finalHead;
+        }
+
+        static Node Merge(Node head1, Node head2)
+        {
+            Node merged = new Node(0);
+            Node temp = merged;
+
+            while (head1 != null && head2 != null)
+            {
+                if (head1.value < head2.value)
+                {
+                    temp.next = head1;
+                    head1 = head1.next;
+                }
+                else
+                {
+                    temp.next = head2;
+                    head2 = head2.next;
+                }
+                temp = temp.next;
+            }
+
+            while (head1 != null)
+            {
+                temp.next = head1;
+                head1 = head1.next;
+                temp = temp.next;
+            }
+
+            while (head2 != null)
+            {
+                temp.next = head2;
+                head2 = head2.next;
+                temp = temp.next;
+            }
+            return merged.next;
+        }
+
+        static Node FindMid(Node head)
+        {
+            Node slow = head, fast = head.next;
+            while (fast != null && fast.next != null)
+            {
+                slow = slow.next;
+                fast = fast.next.next;
+            }
+            return slow;
         }
         public void UdalenieCKonca(int index)        //O(n)
         {
